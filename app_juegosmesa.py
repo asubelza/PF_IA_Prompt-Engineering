@@ -11,29 +11,18 @@ except KeyError:
 # Función para generar ideas de juegos de mesa
 def generate_game_idea(theme, player_count, complexity):
     try:
-        response = openai.ChatCompletion.create(
+        # Usando la nueva API: openai.completions.create
+        response = openai.Completion.create(
             model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "Eres un experto en creación de juegos de mesa. "
-                        "Ayuda a los usuarios a generar ideas personalizadas de juegos de mesa."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        f"Quiero un juego de mesa con la temática '{theme}', "
-                        f"para {player_count} jugadores, con un nivel de complejidad '{complexity}'. "
-                        "Por favor, describe la mecánica, el objetivo y una idea única para el juego."
-                    ),
-                },
-            ],
+            prompt=(
+                f"Imagina que eres un experto en juegos de mesa. Crea una idea para un juego de mesa con la temática '{theme}', "
+                f"para {player_count} jugadores, y con un nivel de complejidad '{complexity}'. "
+                "Describe las mecánicas, el objetivo y cualquier detalle único sobre el juego."
+            ),
             max_tokens=500,
-            temperature=0.7,
+            temperature=0.7
         )
-        return response["choices"][0]["message"]["content"]
+        return response["choices"][0]["text"].strip()
     except Exception as e:
         st.error(f"Error al generar la idea de juego: {e}")
         return None
